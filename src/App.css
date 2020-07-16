@@ -1,9 +1,12 @@
 header img {
     height: 60px;
-    margin-left: 40px;
+    background-color: grey;
+    left: 0;
+    top: 0;
 }
 
 body {
+    background-color: black;
     background-size: cover;
     font-family: sans-serif;
 }
@@ -12,8 +15,12 @@ main {
     color: white;
 }
 
+
+h1{
+    color: white;
+}
 header {
-    background-color: white;
+    background-color: black;
     top: 0;
     left: 0;
     right: 0;
@@ -22,13 +29,16 @@ header {
     margin: 0;
     align-items: center;
 }
-
+h2{
+    color: white;
+}
 header * {
     display: inline;
 }
 
 header li {
     margin: 20px;
+    color: white;
 }
 
 header li a {

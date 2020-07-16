@@ -4,7 +4,7 @@ import axios from "axios";
 import Plotly from "plotly.js-dist";
 import {std, mean} from 'mathjs'
 import sma from 'sma'
-
+import logo from './Financial-chart-economic-graph-analysis-512.png'
 
 class App extends Component {
 
@@ -38,7 +38,20 @@ class App extends Component {
                 }
                 console.log(std(high))
                 var layout = {
+                    font: {
+                        family: "Courier New, monospace",
+                        size: 18,
+                        color: "white"
+                    },
                     width: 1440,
+                    plot_bgcolor: '#000000',
+                    paper_bgcolor: '#000000',
+                    yaxis: {
+                        gridcolor: "rgba(255,255,255,.2)",
+                    },
+                    xaxis: {
+                        gridcolor: "rgba(255,255,255,.2)",
+                    }
                 };
                 var DATA = [
                     {
@@ -81,9 +94,9 @@ class App extends Component {
                 var trace = {
                     x: date.reverse(),
                     close: close.reverse(),
-                    decreasing: {line: {color: '#7F7F7F'}},
+                    decreasing: {line: {color: '#ff4c4c'}},
                     high: high.reverse(),
-                    increasing: {line: {color: '#17BECF'}},
+                    increasing: {line: {color: '#2E8B57'}},
                     line: {color: 'rgba(31,119,180,1)'},
                     low: low.reverse(),
                     open: open.reverse(),
@@ -92,6 +105,11 @@ class App extends Component {
                     yaxis: 'y'
                 };
                 var layout = {
+                    font: {
+                        family: "Courier New, monospace",
+                        size: 18,
+                        color: "white"
+                    },
                     dragmode: 'zoom',
                     width: 1440,
                     margin: {
@@ -107,12 +125,20 @@ class App extends Component {
                         range: [date[0], date[date.length - 1]],
                         rangeslider: {range: [date[0], date[date.length - 1]]},
                         title: 'Date',
-                        type: 'date'
+                        type: 'date',
+                        gridcolor: "rgba(255,255,255,.2)",
+                        zerolinecolor: "rgb(74, 134, 232)"
                     },
+                    plot_bgcolor: '#000000',
+                    paper_bgcolor: '#000000',
+
                     yaxis: {
                         autorange: true,
                         domain: [0, 1],
-                        type: 'linear'
+                        type: 'linear',
+                        gridcolor: "rgba(255,255,255,.2)",
+                        zerolinecolor: "rgb(74, 134, 232)"
+
                     }
                 };
                 var data1 = [trace];
@@ -132,7 +158,15 @@ class App extends Component {
                     volume[i] = data[date[i]]['5. volume'];
                 }
                 var layout = {
+                    plot_bgcolor: '#000000',
+                    paper_bgcolor: '#000000',
                     width: 1440,
+                    yaxis: {
+                        gridcolor: "rgba(255,255,255,.2)",
+                    },
+                    xaxis: {
+                        gridcolor: "rgba(255,255,255,.2)",
+                    }
                 };
                 var DATA = [
                     {
@@ -142,30 +176,30 @@ class App extends Component {
                     }
                 ];
                 Plotly.newPlot('weekly-open', DATA, layout);
-                var DATA = [
-                    {
-                        x: date,
-                        y: close,
-                        type: 'scatter',
-                    }
-                ];
-                Plotly.newPlot('weekly-close', DATA, layout);
-                var DATA = [
-                    {
-                        x: date,
-                        y: low,
-                        type: 'scatter',
-                    }
-                ];
-                Plotly.newPlot('weekly-low', DATA, layout);
-                var DATA = [
-                    {
-                        x: date,
-                        y: high,
-                        type: 'scatter',
-                    }
-                ];
-                Plotly.newPlot('weekly-high', DATA, layout);
+                // var DATA = [
+                //     {
+                //         x: date,
+                //         y: close,
+                //         type: 'scatter',
+                //     }
+                // ];
+                // Plotly.newPlot('weekly-close', DATA, layout);
+                // var DATA = [
+                //     {
+                //         x: date,
+                //         y: low,
+                //         type: 'scatter',
+                //     }
+                // ];
+                // Plotly.newPlot('weekly-low', DATA, layout);
+                // var DATA = [
+                //     {
+                //         x: date,
+                //         y: high,
+                //         type: 'scatter',
+                //     }
+                // ];
+                // Plotly.newPlot('weekly-high', DATA, layout);
                 var DATA = [
                     {
                         x: date,
@@ -174,6 +208,14 @@ class App extends Component {
                     }
                 ];
                 Plotly.newPlot('weekly-volume', DATA, layout);
+                var DATA = [
+                    {
+                        x: date,
+                        y: sma(volume, 7),
+                        type: 'scatter',
+                    }
+                ];
+                Plotly.newPlot('weekly-volumeMa', DATA, layout);
                 this.setState({hidden2: false})
 
             })
@@ -209,6 +251,8 @@ class App extends Component {
                 };
                 var layout = {
                     dragmode: 'zoom',
+                    plot_bgcolor: '#000000',
+                    paper_bgcolor: '#000000',
                     width: 1440,
                     margin: {
                         r: 10,
@@ -223,12 +267,19 @@ class App extends Component {
                         range: [date[0], date[date.length - 1]],
                         rangeslider: {range: [date[0], date[date.length - 1]]},
                         title: 'Date',
-                        type: 'date'
+                        type: 'date',
+                        gridcolor: "rgba(255,255,255,.2)",
+                    },
+                    font: {
+                        family: "Courier New, monospace",
+                        size: 18,
+                        color: "white"
                     },
                     yaxis: {
                         autorange: true,
                         domain: [0, 1],
-                        type: 'linear'
+                        type: 'linear',
+                        gridcolor: "rgba(255,255,255,.2)",
                     }
                 };
                 var data1 = [trace];
@@ -246,7 +297,7 @@ class App extends Component {
             borderRadius: "20px",
             padding: "1rem",
             textAlign: "center",
-            margin: "auto",
+            margin: "5rem auto",
             boxShadow: "0px 2px 11px 6px rgba(0,0,0,.3)",
             backgroundColor: "rgba(0,0,0,.85)",
             color: "white",
@@ -268,10 +319,10 @@ class App extends Component {
             <React.Fragment>
                 <header>
                     <img
-                        src="https://storage.cloud.google.com/applevggh/Financial-chart-economic-graph-analysis-512.png"
+                        src={logo}
                         alt={"icon"}/>
                     <nav>
-                        <li><a>Financial Dashboard</a></li>
+                        <li><a style={{color:'white', textDecoration:'none', fontSize: '2rem'}}>Financial Dashboard</a></li>
                     </nav>
                 </header>
                 <div className="ui container left aligned" style={style}>
@@ -290,13 +341,16 @@ class App extends Component {
                         </button>
                     </form>
                 </div>
-                <div className="ui segment" hidden={visible} style={{height: '400px'}}>
+                <div className="ui segment" hidden={visible}
+                     style={{height: '400px', backgroundColor: "rgba(0,0,0)"}}>
                     <div className="ui active inverted dimmer">
                         <div className="ui large text loader">Loading</div>
                     </div>
                 </div>
                 <div hidden={hidden}>
-                    <h1>Daily plots</h1>
+                    <div style={{textAlign: "center"}}>
+                        <h1>Daily plots</h1>
+                    </div>
                     <div id='myDiv1' hidden={hidden}></div>
                     <div className="ui section divider"></div>
                     <div style={{textAlign: "center"}}>
@@ -309,32 +363,36 @@ class App extends Component {
                         <div id='daily-open'></div>
                         <div className="ui section divider"></div>
                     </div>
-                    <h2>Daily open MA</h2>
-                    <div id='daily-openMa'></div>
-                    <div className="ui section divider"></div>
-                    <h2>Daily Volume MA</h2>
-                    <div id='daily-volumeMa'></div>
-                    <div className="ui section divider"></div>
+                    <div style={{textAlign: "center"}}>
+                        <h2>Daily open MA</h2>
+                        <div id='daily-openMa'></div>
+                        <div className="ui section divider"></div>
+                    </div>
                     <div style={{textAlign: "center"}}>
                         <h2>Daily Volume</h2>
                         <div id='daily-volume'></div>
                         <div className="ui section divider"></div>
                     </div>
                     <div style={{textAlign: "center"}}>
-                        <h2>Weekly high</h2>
-                        <div id='weekly-high'></div>
+                        <h2>Daily Volume MA</h2>
+                        <div id='daily-volumeMa'></div>
                         <div className="ui section divider"></div>
                     </div>
-                    <div style={{textAlign: "center"}}>
-                        <h2>Weekly low</h2>
-                        <div id='weekly-low'></div>
-                        <div className="ui section divider"></div>
-                    </div>
-                    <div style={{textAlign: "center"}}>
-                        <h2>Weekly close</h2>
-                        <div id='weekly-close'></div>
-                        <div className="ui section divider"></div>
-                    </div>
+                    {/*<div style={{textAlign: "center"}}>*/}
+                    {/*    <h2>Weekly high</h2>*/}
+                    {/*    <div id='weekly-high'></div>*/}
+                    {/*    <div className="ui section divider"></div>*/}
+                    {/*</div>*/}
+                    {/*<div style={{textAlign: "center"}}>*/}
+                    {/*    <h2>Weekly low</h2>*/}
+                    {/*    <div id='weekly-low'></div>*/}
+                    {/*    <div className="ui section divider"></div>*/}
+                    {/*</div>*/}
+                    {/*<div style={{textAlign: "center"}}>*/}
+                    {/*    <h2>Weekly close</h2>*/}
+                    {/*    <div id='weekly-close'></div>*/}
+                    {/*    <div className="ui section divider"></div>*/}
+                    {/*</div>*/}
                     <div style={{textAlign: "center"}}>
                         <h2>Weekly open</h2>
                         <div id='weekly-open'></div>
@@ -343,6 +401,12 @@ class App extends Component {
                     <div style={{textAlign: "center"}}>
                         <h2>Weekly volume traded</h2>
                         <div id='weekly-volume'></div>
+                        <div className="ui section divider"></div>
+                    </div>
+                    <div style={{textAlign: "center"}}>
+                        <h2>Weekly volume traded Moving Average</h2>
+                        <div id='weekly-volumeMa'></div>
+                        <div className="ui section divider"></div>
                     </div>
                 </div>
 
