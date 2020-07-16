@@ -20,7 +20,7 @@ class fivemin extends Component {
     render() {
         return (
             <React.Fragment>
-                <div><strong>Weekly Stock Data</strong></div>
+                <div><strong>5 min Stock Data</strong></div>
             </React.Fragment>
         );
     }

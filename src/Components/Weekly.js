@@ -5,6 +5,15 @@ import Plotly from 'plotly.js-dist'
 
 
 class Weekly extends Component {
+    state = {
+        low: null,
+        high: null,
+        date: null,
+        close: null,
+        open: null,
+        volume: null
+    }
+
     componentDidMount() {
         axios.get("https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol=" + this.props.ticker + "&apikey=9O8KE4AAY96A5AKK")
             .then(res => console.log(res.data['Weekly Time Series']))

@@ -7,12 +7,15 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "axios": "^0.19.2",
+    "mathjs": "^7.1.0",
+    "moving-averages": "^4.0.5",
     "plotly.js": "^1.54.6",
     "plotly.js-dist": "^1.54.6",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-plotly.js": "^2.4.0",
-    "react-scripts": "3.4.1"
+    "react-scripts": "3.4.1",
+    "sma": "^0.1.1"
   },
   "scripts": {
     "start": "react-scripts start",
