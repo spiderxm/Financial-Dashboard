@@ -124,7 +124,6 @@ class App extends Component {
                         domain: [0, 1],
                         range: [date[0], date[date.length - 1]],
                         rangeslider: {range: [date[0], date[date.length - 1]]},
-                        title: 'Date',
                         type: 'date',
                         gridcolor: "rgba(255,255,255,.2)",
                         zerolinecolor: "rgb(74, 134, 232)"
@@ -166,6 +165,11 @@ class App extends Component {
                     },
                     xaxis: {
                         gridcolor: "rgba(255,255,255,.2)",
+                    },
+                    font: {
+                        family: "Courier New, monospace",
+                        size: 18,
+                        color: "white"
                     }
                 };
                 var DATA = [
@@ -266,7 +270,6 @@ class App extends Component {
                         domain: [0, 1],
                         range: [date[0], date[date.length - 1]],
                         rangeslider: {range: [date[0], date[date.length - 1]]},
-                        title: 'Date',
                         type: 'date',
                         gridcolor: "rgba(255,255,255,.2)",
                     },
@@ -342,8 +345,8 @@ class App extends Component {
                     </form>
                 </div>
                 <div className="ui segment" hidden={visible}
-                     style={{height: '400px', backgroundColor: "rgba(0,0,0)"}}>
-                    <div className="ui active inverted dimmer">
+                     style={{height: '400px',backgroundColor: "rgba(0,0,0,.85)"}}>
+                    <div className="ui active inverted dimmer" style={{backgroundColor: "rgba(0,0,0,.85)"}}>
                         <div className="ui large text loader">Loading</div>
                     </div>
                 </div>
