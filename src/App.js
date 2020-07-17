@@ -56,9 +56,9 @@ class App extends Component {
                     },
                     boxpoints: false,
                     line: {
-                        color: 'black'
+                        color: 'white'
                     },
-                    fillcolor: '#FFFFFF',
+                    fillcolor: 'pink',
                     opacity: .6,
                     meanline: {
                         visible: true
@@ -93,9 +93,9 @@ class App extends Component {
                     },
                     boxpoints: false,
                     line: {
-                        color: 'black'
+                        color: 'white'
                     },
-                    fillcolor: '#FFFFFF',
+                    fillcolor: 'pink',
                     opacity: .6,
                     meanline: {
                         visible: true
@@ -162,10 +162,16 @@ class App extends Component {
                 ];
                 Plotly.newPlot('daily-volumeMa', DATA, layout);
                 let returnfromstocksperday = [null];
+                let close1 = close.reverse()
                 for (let i = 1; i < close.length; i++) {
-                    returnfromstocksperday[i] = ((close[i] - close[i - 1]) / close[i - 1]).toFixed(4)
+                    returnfromstocksperday[i] = ((close1[i] - close1[i - 1]) / close1[i - 1]).toFixed(5)
                 }
-                console.log("Return from stock : " + returnfromstocksperday)
+                let cummulativedailyreturn = [1];
+                for (let i = 1; i < returnfromstocksperday.length; i++) {
+                    cummulativedailyreturn[i] = ((1 + parseFloat(returnfromstocksperday[i])) * parseFloat(cummulativedailyreturn[i - 1])).toFixed(5);
+                }
+                console.log(returnfromstocksperday)
+                console.log(cummulativedailyreturn)
                 var layout1 = {
                     font: {
                         family: "Courier New, monospace",
@@ -189,6 +195,15 @@ class App extends Component {
                     }
                 ];
                 Plotly.newPlot('pct-change', DATA1, layout1);
+                var DATA = [
+                    {
+                        x: date.reverse(),
+                        y: cummulativedailyreturn,
+                        type: 'scatter',
+                    }
+                ];
+                Plotly.newPlot('dailycumulativereturn', DATA, layout);
+
                 var DATA = [
                     {
                         x: date,
@@ -239,8 +254,8 @@ class App extends Component {
                 // Plotly.newPlot('bollinger', Data, layout1);
                 Plotly.newPlot('daily-volume', DATA, layout);
                 var trace = {
-                    x: date.reverse(),
-                    close: close.reverse(),
+                    x: date,
+                    close: close1,
                     decreasing: {line: {color: '#ff4c4c'}},
                     high: high.reverse(),
                     increasing: {line: {color: '#2E8B57'}},
@@ -482,7 +497,7 @@ class App extends Component {
                         src={logo}
                         alt={"icon"}/>
                     <nav>
-                        <li><a style={{color: 'white', textDecoration: 'none', fontSize: '2rem'}}>Financial
+                        <li><a style={{color: 'white', textDecoration: 'none', fontSize: '2rem' ,fontFamily:"monospace,'Courier New', Courier"}}>Financial
                             Dashboard</a></li>
                     </nav>
                 </header>
@@ -493,7 +508,9 @@ class App extends Component {
                             <div className="ui large icon input">
                                 <input onChange={this.ontickerchangeHandler} placeholder={'AMZN'}
                                        value={this.state.ticker}
-                                       required={true}/>
+                                       required={true}
+                                       style={{fontFamily:"monospace,'Courier New', Courier"}}
+                                />
                                 <i className="inverted circular search link icon" onClick={this.financialDashboard}></i>
                             </div>
                         </div>
@@ -604,6 +621,11 @@ class App extends Component {
                         <div className="ui section divider"></div>
                     </div>
                     <div style={{textAlign: "center"}}>
+                        <h2>Daily Cumulative return</h2>
+                        <div id='dailycumulativereturn' style={{overflow: 'scroll'}}></div>
+                        <div className="ui section divider"></div>
+                    </div>
+                    <div style={{textAlign: "center"}}>
                         <h2>Daily Volume Traded</h2>
                         <div id='daily-volume' style={{overflow: 'scroll'}}></div>
                         <div className="ui section divider"></div>
@@ -618,6 +640,11 @@ class App extends Component {
                         <div id='violinplotvolume' style={{overflow: 'scroll'}}></div>
                         <div className="ui section divider"></div>
                     </div>
+                    {/*<div style={{textAlign: "center"}}>*/}
+                    {/*    <h2>Daily Cumulative return</h2>*/}
+                    {/*    <div id='dailycumulativereturn' style={{overflow: 'scroll'}}></div>*/}
+                    {/*    <div className="ui section divider"></div>*/}
+                    {/*</div>*/}
                     {/*<div style={{textAlign: "center"}}>*/}
                     {/*    <h2>Weekly high</h2>*/}
                     {/*    <div id='weekly-high'></div>*/}

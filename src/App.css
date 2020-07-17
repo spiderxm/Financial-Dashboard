@@ -8,19 +8,23 @@ header img {
 body {
     background-color: black;
     background-size: cover;
-    font-family: sans-serif;
+    font-family: monospace, 'Courier New', Courier;
 }
 
 main {
     color: white;
 }
-h2{
-    font-family: monospace;
+
+h2 {
+    font-family: monospace, 'Courier New', Courier;
 }
 
-h1{
+h1 {
     color: white;
+    font-family: monospace, 'Courier New', Courier;
+
 }
+
 header {
     background-color: black;
     top: 0;
@@ -31,9 +35,11 @@ header {
     margin: 0;
     align-items: center;
 }
-h2{
+
+h2 {
     color: white;
 }
+
 header * {
     display: inline;
 }
