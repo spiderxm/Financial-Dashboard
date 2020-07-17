@@ -1,0 +1,16 @@
+@import 'https://fonts.googleapis.com/css?family=Roboto+Mono:100';
+.container {
+  height: 50%;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+.text {
+  font-weight: 100;
+  font-size: 1.2rem;
+  color: white;
+}
+.dud {
+  color: #757575;
+}

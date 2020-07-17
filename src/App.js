@@ -5,7 +5,7 @@ import Plotly from "plotly.js-dist";
 import {std, mean} from 'mathjs'
 import sma from 'sma'
 import logo from './Financial-chart-economic-graph-analysis-512.png'
-import boll from 'bollinger-bands'
+import Error from './Components/error'
 
 class App extends Component {
 
@@ -25,6 +25,7 @@ class App extends Component {
         minpricelow: 0,
         maxvolume: 0,
         minvolume: 0,
+        error: false,
         totalvolumetraded: 0
     }
     ontickerchangeHandler = (event) => {
@@ -33,427 +34,530 @@ class App extends Component {
 
     financialDashboard = (event) => {
         event.preventDefault();
+        this.setState({error: false})
         this.setState({visible: false});
         this.setState({hidden1: true, hidden2: true, hidden3: true})
         let low = [], high = [], close = [], open = [], volume = [], date;
         axios.get("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + this.state.ticker + "&outputsize=full&apikey=9O8KE4AAY96A5AKK")
             .then(res => {
-                let data = res.data['Time Series (Daily)']
-                date = Object.keys(data);
-                for (let i = 0; i < date.length; i++) {
-                    open[i] = data[date[i]]['1. open'];
-                    high[i] = data[date[i]]['2. high'];
-                    low[i] = data[date[i]]['3. low'];
-                    close[i] = data[date[i]]['4. close'];
-                    volume[i] = data[date[i]]['5. volume'];
-                }
-                var DATA = [{
-                    type: 'violin',
-                    x: close,
-                    points: 'none',
-                    box: {
-                        visible: true
-                    },
-                    boxpoints: false,
-                    line: {
-                        color: 'white'
-                    },
-                    fillcolor: 'pink',
-                    opacity: .6,
-                    meanline: {
-                        visible: true
-                    },
-                    y0: "Total Bill"
-                }]
-
-                var layout = {
-                    font: {
-                        family: "Courier New, monospace",
-                        size: 18,
-                        color: "white"
-                    },
-                    width: 1440,
-                    plot_bgcolor: '#000000',
-                    paper_bgcolor: '#000000',
-                    yaxis: {
-                        gridcolor: "rgba(255,255,255,.2)",
-                    },
-                    xaxis: {
-                        gridcolor: "rgba(255,255,255,.2)",
-                        zeroline: false
+                let keys = Object.keys(res.data);
+                if (keys[0] === "Error Message" || keys[0] == "Note") {
+                    this.setState({error: true})
+                } else {
+                    this.setState({error: false})
+                    let data = res.data['Time Series (Daily)']
+                    date = Object.keys(data);
+                    for (let i = 0; i < date.length; i++) {
+                        open[i] = data[date[i]]['1. open'];
+                        high[i] = data[date[i]]['2. high'];
+                        low[i] = data[date[i]]['3. low'];
+                        close[i] = data[date[i]]['4. close'];
+                        volume[i] = data[date[i]]['5. volume'];
                     }
-                }
-                Plotly.newPlot('violinplot', DATA, layout);
-                var DATA = [{
-                    type: 'violin',
-                    x: volume,
-                    points: 'none',
-                    box: {
-                        visible: true
-                    },
-                    boxpoints: false,
-                    line: {
-                        color: 'white'
-                    },
-                    fillcolor: 'pink',
-                    opacity: .6,
-                    meanline: {
-                        visible: true
-                    },
-                    y0: "Total Bill"
-                }]
-                Plotly.newPlot('violinplotvolume', DATA, layout);
+                    var DATA = [{
+                        type: 'violin',
+                        x: close,
+                        points: 'none',
+                        box: {
+                            visible: true
+                        },
+                        boxpoints: false,
+                        line: {
+                            color: 'white'
+                        },
+                        fillcolor: 'pink',
+                        opacity: .6,
+                        meanline: {
+                            visible: true
+                        },
+                        y0: "Total Bill"
+                    }]
 
-                this.setState({
-                    maxpriceopen: Math.max(...open),
-                    minpriceopen: Math.min(...open),
-                    maxpriceclose: Math.max(...close),
-                    minpriceclose: Math.min(...close),
-                    maxpricehigh: Math.max(...high),
-                    minpricehigh: Math.min(...high),
-                    maxpricelow: Math.max(...low),
-                    minpricelow: Math.min(...low),
-                    maxvolume: Math.max(...volume),
-                    minvolume: Math.min(...volume),
-                    totalvolumetraded: eval(volume.join('+'))
-                })
-                Plotly.newPlot('daily-open', DATA, layout);
-                var layout = {
-                    font: {
-                        family: "Courier New, monospace",
-                        size: 18,
-                        color: "white"
-                    },
-                    width: 1440,
-                    plot_bgcolor: '#000000',
-                    paper_bgcolor: '#000000',
-                    yaxis: {
-                        gridcolor: "rgba(255,255,255,.2)",
-                    },
-                    xaxis: {
-                        gridcolor: "rgba(255,255,255,.2)",
+                    var layout = {
+                        font: {
+                            family: "Courier New, monospace",
+                            size: 18,
+                            color: "white"
+                        },
+                        width: 1440,
+                        plot_bgcolor: '#000000',
+                        paper_bgcolor: '#000000',
+                        yaxis: {
+                            gridcolor: "rgba(255,255,255,.2)",
+                        },
+                        xaxis: {
+                            gridcolor: "rgba(255,255,255,.2)",
+                            zeroline: false
+                        }
                     }
-                };
+                    Plotly.newPlot('violinplot', DATA, layout);
+                    var DATA = [{
+                        type: 'violin',
+                        x: volume,
+                        points: 'none',
+                        box: {
+                            visible: true
+                        },
+                        boxpoints: false,
+                        line: {
+                            color: 'white'
+                        },
+                        fillcolor: 'pink',
+                        opacity: .6,
+                        meanline: {
+                            visible: true
+                        },
+                        y0: "Total Bill"
+                    }]
+                    Plotly.newPlot('violinplotvolume', DATA, layout);
 
-                var DATA = [
-                    {
+                    this.setState({
+                        maxpriceopen: Math.max(...open),
+                        minpriceopen: Math.min(...open),
+                        maxpriceclose: Math.max(...close),
+                        minpriceclose: Math.min(...close),
+                        maxpricehigh: Math.max(...high),
+                        minpricehigh: Math.min(...high),
+                        maxpricelow: Math.max(...low),
+                        minpricelow: Math.min(...low),
+                        maxvolume: Math.max(...volume),
+                        minvolume: Math.min(...volume),
+                        totalvolumetraded: eval(volume.join('+'))
+                    })
+                    Plotly.newPlot('daily-open', DATA, layout);
+                    var layout = {
+                        font: {
+                            family: "Courier New, monospace",
+                            size: 18,
+                            color: "white"
+                        },
+                        width: 1440,
+                        plot_bgcolor: '#000000',
+                        paper_bgcolor: '#000000',
+                        yaxis: {
+                            gridcolor: "rgba(255,255,255,.2)",
+                        },
+                        xaxis: {
+                            gridcolor: "rgba(255,255,255,.2)",
+                        }
+                    };
+
+                    var DATA = [
+                        {
+                            x: date,
+                            y: open,
+                            type: 'scatter',
+                        }
+                    ];
+
+                    Plotly.newPlot('daily-open', DATA, layout);
+                    var DATA = [
+                        {
+                            x: date,
+                            y: sma(open, 7),
+                            type: 'scatter',
+                        }
+                    ];
+                    Plotly.newPlot('daily-openMa', DATA, layout);
+                    let ma1 = sma(volume, 7)
+                    var DATA = [
+                        {
+                            x: date,
+                            y: ma1,
+                            type: 'scatter',
+                        }
+                    ];
+                    Plotly.newPlot('daily-volumeMa', DATA, layout);
+                    let returnfromstocksperday = [null];
+                    let close1 = close.reverse()
+                    for (let i = 1; i < close.length; i++) {
+                        returnfromstocksperday[i] = ((close1[i] - close1[i - 1]) / close1[i - 1]).toFixed(5)
+                    }
+                    let cummulativedailyreturn = [1];
+                    for (let i = 1; i < returnfromstocksperday.length; i++) {
+                        cummulativedailyreturn[i] = ((1 + parseFloat(returnfromstocksperday[i])) * parseFloat(cummulativedailyreturn[i - 1])).toFixed(5);
+                    }
+                    console.log(returnfromstocksperday)
+                    console.log(cummulativedailyreturn)
+                    var layout1 = {
+                        font: {
+                            family: "Courier New, monospace",
+                            size: 18,
+                            color: "white"
+                        },
+                        width: 1440,
+                        plot_bgcolor: '#000000',
+                        paper_bgcolor: '#000000',
+                        yaxis: {
+                            gridcolor: "rgba(255,255,255,.2)",
+                        },
+                        xaxis: {
+                            gridcolor: "rgba(255,255,255,.2)",
+                        }
+                    };
+                    var DATA1 = [
+                        {
+                            x: returnfromstocksperday,
+                            type: 'histogram'
+                        }
+                    ];
+                    Plotly.newPlot('pct-change', DATA1, layout1);
+                    var DATA = [
+                        {
+                            x: date.reverse(),
+                            y: cummulativedailyreturn,
+                            type: 'scatter',
+                        }
+                    ];
+                    Plotly.newPlot('dailycumulativereturn', DATA, layout);
+
+                    var DATA = [
+                        {
+                            x: date,
+                            y: volume,
+                            type: 'scatter',
+                        }
+                    ];
+                    Plotly.newPlot('daily-volume', DATA, layout);
+                    var trace = {
                         x: date,
-                        y: open,
-                        type: 'scatter',
-                    }
-                ];
+                        close: close1,
+                        decreasing: {line: {color: '#ff4c4c'}},
+                        high: high.reverse(),
+                        increasing: {line: {color: '#2E8B57'}},
+                        line: {color: 'rgba(31,119,180,1)'},
+                        low: low.reverse(),
+                        open: open.reverse(),
+                        type: 'candlestick',
+                        xaxis: 'x',
+                        yaxis: 'y'
+                    };
+                    var layout = {
+                        font: {
+                            family: "Courier New, monospace",
+                            size: 18,
+                            color: "white"
+                        },
+                        dragmode: 'zoom',
+                        width: 1440,
+                        margin: {
+                            r: 10,
+                            t: 25,
+                            b: 40,
+                            l: 60
+                        },
+                        showlegend: false,
+                        xaxis: {
+                            autorange: true,
+                            domain: [0, 1],
+                            range: [date[0], date[date.length - 1]],
+                            rangeslider: {range: [date[0], date[date.length - 1]]},
+                            type: 'date',
+                            gridcolor: "rgba(255,255,255,.2)",
+                            zerolinecolor: "rgb(74, 134, 232)"
+                        },
+                        plot_bgcolor: '#000000',
+                        paper_bgcolor: '#000000',
 
-                Plotly.newPlot('daily-open', DATA, layout);
-                var DATA = [
-                    {
-                        x: date,
-                        y: sma(open, 7),
-                        type: 'scatter',
-                    }
-                ];
-                Plotly.newPlot('daily-openMa', DATA, layout);
-                let ma1 = sma(volume, 7)
-                var DATA = [
-                    {
-                        x: date,
-                        y: ma1,
-                        type: 'scatter',
-                    }
-                ];
-                Plotly.newPlot('daily-volumeMa', DATA, layout);
-                let returnfromstocksperday = [null];
-                let close1 = close.reverse()
-                for (let i = 1; i < close.length; i++) {
-                    returnfromstocksperday[i] = ((close1[i] - close1[i - 1]) / close1[i - 1]).toFixed(5)
+                        yaxis: {
+                            autorange: true,
+                            domain: [0, 1],
+                            type: 'linear',
+                            gridcolor: "rgba(255,255,255,.2)",
+                            zerolinecolor: "rgb(74, 134, 232)"
+
+                        }
+                    };
+                    var data1 = [trace];
+                    Plotly.newPlot('myDiv', data1, layout);
+                    this.setState({hidden1: false})
                 }
-                let cummulativedailyreturn = [1];
-                for (let i = 1; i < returnfromstocksperday.length; i++) {
-                    cummulativedailyreturn[i] = ((1 + parseFloat(returnfromstocksperday[i])) * parseFloat(cummulativedailyreturn[i - 1])).toFixed(5);
-                }
-                console.log(returnfromstocksperday)
-                console.log(cummulativedailyreturn)
-                var layout1 = {
-                    font: {
-                        family: "Courier New, monospace",
-                        size: 18,
-                        color: "white"
-                    },
-                    width: 1440,
-                    plot_bgcolor: '#000000',
-                    paper_bgcolor: '#000000',
-                    yaxis: {
-                        gridcolor: "rgba(255,255,255,.2)",
-                    },
-                    xaxis: {
-                        gridcolor: "rgba(255,255,255,.2)",
-                    }
-                };
-                var DATA1 = [
-                    {
-                        x: returnfromstocksperday,
-                        type: 'histogram'
-                    }
-                ];
-                Plotly.newPlot('pct-change', DATA1, layout1);
-                var DATA = [
-                    {
-                        x: date.reverse(),
-                        y: cummulativedailyreturn,
-                        type: 'scatter',
-                    }
-                ];
-                Plotly.newPlot('dailycumulativereturn', DATA, layout);
-
-                var DATA = [
-                    {
-                        x: date,
-                        y: volume,
-                        type: 'scatter',
-                    }
-                ];
-                // var bollinger = boll(open)
-                // console.log(bollinger)
-                // var Data = [
-                //     {
-                //         x: date,
-                //         y: open,
-                //         type: 'scatter',
-                //     },
-                //     {
-                //         x: date,
-                //         y: bollinger.mid,
-                //         type: 'scatter',
-                //     },
-                //     {
-                //         x: date,
-                //         y: bollinger.upper,
-                //         type: 'scatter',
-                //     },
-                //     {
-                //         x: date,
-                //         y: bollinger.lower,
-                //         type: 'scatter',
-                //     }
-                // ]
-                // var layout1 = {
-                //     plot_bgcolor: '#000000',
-                //     paper_bgcolor: '#000000',
-                //     width: 1440,
-                //     yaxis: {
-                //         gridcolor: "rgba(255,255,255,.2)",
-                //     },
-                //     xaxis: {
-                //         gridcolor: "rgba(255,255,255,.2)",
-                //     },
-                //     font: {
-                //         family: "Courier New, monospace",
-                //         size: 18,
-                //         color: "white"
-                //     }
-                // };
-                // Plotly.newPlot('bollinger', Data, layout1);
-                Plotly.newPlot('daily-volume', DATA, layout);
-                var trace = {
-                    x: date,
-                    close: close1,
-                    decreasing: {line: {color: '#ff4c4c'}},
-                    high: high.reverse(),
-                    increasing: {line: {color: '#2E8B57'}},
-                    line: {color: 'rgba(31,119,180,1)'},
-                    low: low.reverse(),
-                    open: open.reverse(),
-                    type: 'candlestick',
-                    xaxis: 'x',
-                    yaxis: 'y'
-                };
-                var layout = {
-                    font: {
-                        family: "Courier New, monospace",
-                        size: 18,
-                        color: "white"
-                    },
-                    dragmode: 'zoom',
-                    width: 1440,
-                    margin: {
-                        r: 10,
-                        t: 25,
-                        b: 40,
-                        l: 60
-                    },
-                    showlegend: false,
-                    xaxis: {
-                        autorange: true,
-                        domain: [0, 1],
-                        range: [date[0], date[date.length - 1]],
-                        rangeslider: {range: [date[0], date[date.length - 1]]},
-                        type: 'date',
-                        gridcolor: "rgba(255,255,255,.2)",
-                        zerolinecolor: "rgb(74, 134, 232)"
-                    },
-                    plot_bgcolor: '#000000',
-                    paper_bgcolor: '#000000',
-
-                    yaxis: {
-                        autorange: true,
-                        domain: [0, 1],
-                        type: 'linear',
-                        gridcolor: "rgba(255,255,255,.2)",
-                        zerolinecolor: "rgb(74, 134, 232)"
-
-                    }
-                };
-                var data1 = [trace];
-                Plotly.newPlot('myDiv', data1, layout);
-                this.setState({hidden1: false})
             });
         axios.get("https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol=" + this.state.ticker + "&apikey=9O8KE4AAY96A5AKK")
             .then(res => {
-                let low = [], high = [], close = [], open = [], volume = [];
-                let data = res.data['Weekly Time Series']
-                date = Object.keys(data);
-                for (let i = 0; i < date.length; i++) {
-                    open[i] = data[date[i]]['1. open'];
-                    high[i] = data[date[i]]['2. high'];
-                    low[i] = data[date[i]]['3. low'];
-                    close[i] = data[date[i]]['4. close'];
-                    volume[i] = data[date[i]]['5. volume'];
+                let keys = Object.keys(res.data);
+                if (keys[0] === "Error Message" || keys[0] == "Note") {
+                    this.setState({error: true})
+                } else {
+                    this.setState({error: false})
+                    let low = [], high = [], close = [], open = [], volume = [];
+                    let data = res.data['Weekly Time Series']
+                    date = Object.keys(data);
+                    for (let i = 0; i < date.length; i++) {
+                        open[i] = data[date[i]]['1. open'];
+                        high[i] = data[date[i]]['2. high'];
+                        low[i] = data[date[i]]['3. low'];
+                        close[i] = data[date[i]]['4. close'];
+                        volume[i] = data[date[i]]['5. volume'];
+                    }
+                    var layout = {
+                        plot_bgcolor: '#000000',
+                        paper_bgcolor: '#000000',
+                        width: 1440,
+                        yaxis: {
+                            gridcolor: "rgba(255,255,255,.2)",
+                        },
+                        xaxis: {
+                            gridcolor: "rgba(255,255,255,.2)",
+                        },
+                        font: {
+                            family: "Courier New, monospace",
+                            size: 18,
+                            color: "white"
+                        }
+                    };
+                    var DATA = [
+                        {
+                            x: date,
+                            y: open,
+                            type: 'scatter',
+                        }
+                    ];
+                    Plotly.newPlot('weekly-open', DATA, layout);
+                    var DATA = [
+                        {
+                            x: date,
+                            y: sma(open, 7),
+                            type: 'scatter',
+                        }
+                    ];
+                    Plotly.newPlot('weekly-openMa', DATA, layout);
+                    // var DATA = [
+                    //     {
+                    //         x: date,
+                    //         y: close,
+                    //         type: 'scatter',
+                    //     }
+                    // ];
+                    // Plotly.newPlot('weekly-close', DATA, layout);
+                    // var DATA = [
+                    //     {
+                    //         x: date,
+                    //         y: low,
+                    //         type: 'scatter',
+                    //     }
+                    // ];
+                    // Plotly.newPlot('weekly-low', DATA, layout);
+                    // var DATA = [
+                    //     {
+                    //         x: date,
+                    //         y: high,
+                    //         type: 'scatter',
+                    //     }
+                    // ];
+                    // Plotly.newPlot('weekly-high', DATA, layout);
+                    var DATA = [
+                        {
+                            x: date,
+                            y: volume,
+                            type: 'scatter',
+                        }
+                    ];
+                    Plotly.newPlot('weekly-volume', DATA, layout);
+                    var DATA = [
+                        {
+                            x: date,
+                            y: sma(volume, 7),
+                            type: 'scatter',
+                        }
+                    ];
+                    Plotly.newPlot('weekly-volumeMa', DATA, layout);
+                    let mid = [];
+                    let upper = [];
+                    let lower = [];
+                    const ma = 7;
+                    for (let i = 0; i < ma - 1; i++) {
+                        mid[i] = null;
+                        upper[i] = null;
+                        lower[i] = null;
+                    }
+                    let open1 = open.reverse()
+                    for (let i = ma - 1; i < open.length; i++) {
+                        let arr = [];
+                        for (let j = 0; j < ma; j++) {
+                            arr[j] = open1[i - j];
+                        }
+                        mid[i] = parseFloat(mean(arr));
+                        upper[i] = parseFloat(mid[i]) + parseFloat(2 * parseFloat(std(arr)));
+                        lower[i] = parseFloat(mid[i]) - parseFloat(2 * parseFloat(std(arr)));
+                    }
+                    var Data = [
+                        {
+                            x: date.reverse(),
+                            y: open1.reverse(),
+                            type: 'scatter',
+                            name: 'Open'
+                        },
+                        {
+                            x: date.reverse(),
+                            y: mid.reverse(),
+                            type: 'scatter',
+                            name: 'Open SMA'
+                        },
+                        {
+                            x: date.reverse(),
+                            y: upper.reverse(),
+                            type: 'scatter',
+                            name: 'Upper'
+                        },
+                        {
+                            x: date.reverse(),
+                            y: lower.reverse(),
+                            type: 'scatter',
+                            name: 'Lower'
+                        }
+                    ]
+                    var layout1 = {
+                        plot_bgcolor: '#000000',
+                        paper_bgcolor: '#000000',
+                        width: 1440,
+                        showlegend: true,
+                        yaxis: {
+                            gridcolor: "rgba(255,255,255,.2)",
+                        },
+                        xaxis: {
+                            gridcolor: "rgba(255,255,255,.2)",
+                        },
+                        font: {
+                            family: "Courier New, monospace",
+                            size: 18,
+                            color: "white"
+                        }
+                    };
+                    Plotly.newPlot('bollinger', Data, layout1);
+                    this.setState({hidden2: false})
                 }
-                var layout = {
-                    plot_bgcolor: '#000000',
-                    paper_bgcolor: '#000000',
-                    width: 1440,
-                    yaxis: {
-                        gridcolor: "rgba(255,255,255,.2)",
-                    },
-                    xaxis: {
-                        gridcolor: "rgba(255,255,255,.2)",
-                    },
-                    font: {
-                        family: "Courier New, monospace",
-                        size: 18,
-                        color: "white"
-                    }
-                };
-                var DATA = [
-                    {
-                        x: date,
-                        y: open,
-                        type: 'scatter',
-                    }
-                ];
-                Plotly.newPlot('weekly-open', DATA, layout);
-                var DATA = [
-                    {
-                        x: date,
-                        y: sma(open, 7),
-                        type: 'scatter',
-                    }
-                ];
-                Plotly.newPlot('weekly-openMa', DATA, layout);
-                // var DATA = [
-                //     {
-                //         x: date,
-                //         y: close,
-                //         type: 'scatter',
-                //     }
-                // ];
-                // Plotly.newPlot('weekly-close', DATA, layout);
-                // var DATA = [
-                //     {
-                //         x: date,
-                //         y: low,
-                //         type: 'scatter',
-                //     }
-                // ];
-                // Plotly.newPlot('weekly-low', DATA, layout);
-                // var DATA = [
-                //     {
-                //         x: date,
-                //         y: high,
-                //         type: 'scatter',
-                //     }
-                // ];
-                // Plotly.newPlot('weekly-high', DATA, layout);
-                var DATA = [
-                    {
-                        x: date,
-                        y: volume,
-                        type: 'scatter',
-                    }
-                ];
-                Plotly.newPlot('weekly-volume', DATA, layout);
-                var DATA = [
-                    {
-                        x: date,
-                        y: sma(volume, 7),
-                        type: 'scatter',
-                    }
-                ];
-                Plotly.newPlot('weekly-volumeMa', DATA, layout);
-                this.setState({hidden2: false})
-
             })
             .catch(err => console.log(err))
         axios.get("https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=" + this.state.ticker + "&interval=5min&apikey=9O8KE4AAY96A5AKK")
             .then(res => {
-                let low = [], high = [], close = [], open = [], volume = [];
-                let data = res.data['Time Series (5min)']
-                date = Object.keys(data);
-                for (let i = 0; i < date.length; i++) {
-                    open[i] = parseFloat(data[date[i]]['1. open']).toFixed(2);
-                    high[i] = parseFloat(data[date[i]]['2. high']).toFixed(2);
-                    low[i] = parseFloat(data[date[i]]['3. low']).toFixed(2);
-                    close[i] = parseFloat(data[date[i]]['4. close']).toFixed(2);
-                    volume[i] = parseFloat(data[date[i]]['5. volume']).toFixed(0);
-                }
-                var trace = {
-                    x: date.reverse(),
-                    close: close.reverse(),
-                    decreasing: {line: {color: '#DC143C'}},
-                    high: high.reverse(),
-                    increasing: {line: {color: '#2E8B57'}},
-                    line: {color: 'rgba(31,119,180,1)'},
-                    low: low.reverse(),
-                    open: open.reverse(),
-                    type: 'candlestick',
-                    xaxis: 'x',
-                    yaxis: 'y'
-                };
-                var layout = {
-                    dragmode: 'zoom',
-                    plot_bgcolor: '#000000',
-                    paper_bgcolor: '#000000',
-                    width: 1440,
-                    margin: {
-                        r: 10,
-                        t: 25,
-                        b: 40,
-                        l: 60
-                    },
-                    showlegend: false,
-                    xaxis: {
-                        autorange: true,
-                        domain: [0, 1],
-                        range: [date[0], date[date.length - 1]],
-                        rangeslider: {range: [date[0], date[date.length - 1]]},
-                        type: 'date',
-                        gridcolor: "rgba(255,255,255,.2)",
-                    },
-                    font: {
-                        family: "Courier New, monospace",
-                        size: 18,
-                        color: "white"
-                    },
-                    yaxis: {
-                        autorange: true,
-                        domain: [0, 1],
-                        type: 'linear',
-                        gridcolor: "rgba(255,255,255,.2)",
+                let keys = Object.keys(res.data);
+                if (keys[0] === "Error Message" || keys[0] === "Note") {
+                    this.setState({error: true})
+                } else {
+                    this.setState({error: false})
+                    let low = [], high = [], close = [], open = [], volume = [];
+                    let data = res.data['Time Series (5min)']
+                    date = Object.keys(data);
+                    for (let i = 0; i < date.length; i++) {
+                        open[i] = parseFloat(data[date[i]]['1. open']).toFixed(2);
+                        high[i] = parseFloat(data[date[i]]['2. high']).toFixed(2);
+                        low[i] = parseFloat(data[date[i]]['3. low']).toFixed(2);
+                        close[i] = parseFloat(data[date[i]]['4. close']).toFixed(2);
+                        volume[i] = parseFloat(data[date[i]]['5. volume']).toFixed(0);
                     }
-                };
-                var data1 = [trace];
-                Plotly.newPlot('myDiv1', data1, layout);
-                this.setState({hidden3: false})
+                    var trace = {
+                        x: date.reverse(),
+                        close: close.reverse(),
+                        decreasing: {line: {color: '#DC143C'}},
+                        high: high.reverse(),
+                        increasing: {line: {color: '#2E8B57'}},
+                        line: {color: 'rgba(31,119,180,1)'},
+                        low: low.reverse(),
+                        open: open.reverse(),
+                        type: 'candlestick',
+                        xaxis: 'x',
+                        yaxis: 'y'
+                    };
+                    var layout = {
+                        dragmode: 'zoom',
+                        plot_bgcolor: '#000000',
+                        paper_bgcolor: '#000000',
+                        width: 1440,
+                        margin: {
+                            r: 10,
+                            t: 25,
+                            b: 40,
+                            l: 60
+                        },
+                        showlegend: false,
+                        xaxis: {
+                            autorange: true,
+                            domain: [0, 1],
+                            range: [date[0], date[date.length - 1]],
+                            rangeslider: {range: [date[0], date[date.length - 1]]},
+                            type: 'date',
+                            gridcolor: "rgba(255,255,255,.2)",
+                        },
+                        font: {
+                            family: "Courier New, monospace",
+                            size: 18,
+                            color: "white"
+                        },
+                        yaxis: {
+                            autorange: true,
+                            domain: [0, 1],
+                            type: 'linear',
+                            gridcolor: "rgba(255,255,255,.2)",
+                        }
+                    };
+                    var data1 = [trace];
+                    Plotly.newPlot('myDiv1', data1, layout);
+                    let mid = [];
+                    let upper = [];
+                    let lower = [];
+                    const ma = 7;
+                    for (let i = 0; i < ma - 1; i++) {
+                        mid[i] = null;
+                        upper[i] = null;
+                        lower[i] = null;
+                    }
+                    let open1 = open.reverse()
+                    for (let i = ma - 1; i < open.length; i++) {
+                        let arr = [];
+                        for (let j = 0; j < ma; j++) {
+                            arr[j] = open1[i - j];
+                        }
+                        mid[i] = parseFloat(mean(arr));
+                        upper[i] = parseFloat(mid[i]) + parseFloat(2 * parseFloat(std(arr)));
+                        lower[i] = parseFloat(mid[i]) - parseFloat(2 * parseFloat(std(arr)));
+                    }
+                    var Data = [
+                        {
+                            x: date.reverse(),
+                            y: open1.reverse(),
+                            type: 'scatter',
+                            name: 'Open'
+                        },
+                        {
+                            x: date.reverse(),
+                            y: mid.reverse(),
+                            type: 'scatter',
+                            name: 'Open SMA'
+                        },
+                        {
+                            x: date.reverse(),
+                            y: upper.reverse(),
+                            type: 'scatter',
+                            name: 'Upper'
+                        },
+                        {
+                            x: date.reverse(),
+                            y: lower.reverse(),
+                            type: 'scatter',
+                            name: 'Lower'
+                        }
+                    ]
+                    var layout1 = {
+                        plot_bgcolor: '#000000',
+                        paper_bgcolor: '#000000',
+                        width: 1440,
+                        showlegend: true,
+                        yaxis: {
+                            gridcolor: "rgba(255,255,255,.2)",
+                        },
+                        xaxis: {
+                            gridcolor: "rgba(255,255,255,.2)",
+                        },
+                        font: {
+                            family: "Courier New, monospace",
+                            size: 18,
+                            color: "white"
+                        }
+                    };
+                    Plotly.newPlot('bollinger5', Data, layout1);
+                    this.setState({hidden3: false})
+                }
             })
             .catch(err => console.log(err))
         console.log(this.state.ticker);
@@ -475,13 +579,21 @@ class App extends Component {
         }
         let hidden = true;
         if (!this.state.hidden1 && !this.state.hidden2 && !this.state.hidden3) {
-            hidden = false;
+            if (this.state.error) {
+                hidden = true
+            } else {
+                hidden = false;
+            }
         }
         let visible = true;
         if (this.state.visible) {
             visible = true;
         } else {
-            visible = !hidden
+            if (this.state.error) {
+                visible = true
+            } else {
+                visible = !hidden
+            }
         }
         const style2 = {
             border: '1px solid white',
@@ -497,7 +609,12 @@ class App extends Component {
                         src={logo}
                         alt={"icon"}/>
                     <nav>
-                        <li><a style={{color: 'white', textDecoration: 'none', fontSize: '2rem' ,fontFamily:"monospace,'Courier New', Courier"}}>Financial
+                        <li><a style={{
+                            color: 'white',
+                            textDecoration: 'none',
+                            fontSize: '2rem',
+                            fontFamily: "monospace,'Courier New', Courier"
+                        }}>Financial
                             Dashboard</a></li>
                     </nav>
                 </header>
@@ -509,7 +626,7 @@ class App extends Component {
                                 <input onChange={this.ontickerchangeHandler} placeholder={'AMZN'}
                                        value={this.state.ticker}
                                        required={true}
-                                       style={{fontFamily:"monospace,'Courier New', Courier"}}
+                                       style={{fontFamily: "monospace,'Courier New', Courier"}}
                                 />
                                 <i className="inverted circular search link icon" onClick={this.financialDashboard}></i>
                             </div>
@@ -524,6 +641,9 @@ class App extends Component {
                     <div className="ui active inverted dimmer" style={{backgroundColor: "rgba(0,0,0,.85)"}}>
                         <div className="ui large text loader">Loading</div>
                     </div>
+                </div>
+                <div hidden={!this.state.error}>
+                    <Error/>
                 </div>
                 <div hidden={hidden}>
                     <div style={{textAlign: 'center'}}>
@@ -571,7 +691,6 @@ class App extends Component {
                             </div>
                         </div>
                         <div className="column">
-
                             <div style={style2}>
                                 <h2>Maximum volume traded: {this.state.maxvolume}</h2>
                             </div>
@@ -593,6 +712,11 @@ class App extends Component {
                     <div style={{textAlign: "center"}}>
                         <h1>5 minute</h1>
                         <div id='myDiv1' style={{overflow: 'scroll'}}></div>
+                        <div className="ui section divider"></div>
+                    </div>
+                    <div style={{textAlign: "center"}}>
+                        <h2>Bollinger Band (5 minute)</h2>
+                        <div id='bollinger5' style={{overflow: 'scroll'}}></div>
                         <div className="ui section divider"></div>
                     </div>
                     <div style={{textAlign: "center"}}>
@@ -684,7 +808,6 @@ class App extends Component {
                         <h2>Bollinger Bands</h2>
                         <div id='bollinger' style={{overflow: 'scroll'}}></div>
                         <div className="ui section divider"></div>
-
                     </div>
                 </div>
 
