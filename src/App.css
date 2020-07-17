@@ -14,7 +14,9 @@ body {
 main {
     color: white;
 }
-
+h2{
+    font-family: monospace;
+}
 
 h1{
     color: white;

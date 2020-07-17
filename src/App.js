@@ -5,6 +5,7 @@ import Plotly from "plotly.js-dist";
 import {std, mean} from 'mathjs'
 import sma from 'sma'
 import logo from './Financial-chart-economic-graph-analysis-512.png'
+import boll from 'bollinger-bands'
 
 class App extends Component {
 
@@ -13,8 +14,18 @@ class App extends Component {
         hidden1: true,
         hidden2: true,
         hidden3: true,
-        visible: true
-
+        visible: true,
+        maxpriceopen: 0,
+        minpriceopen: 0,
+        maxpriceclose: 0,
+        minpriceclose: 0,
+        maxpricehigh: 0,
+        minpricehigh: 0,
+        maxpricelow: 0,
+        minpricelow: 0,
+        maxvolume: 0,
+        minvolume: 0,
+        totalvolumetraded: 0
     }
     ontickerchangeHandler = (event) => {
         this.setState({ticker: event.target.value.toString().toUpperCase()})
@@ -36,7 +47,77 @@ class App extends Component {
                     close[i] = data[date[i]]['4. close'];
                     volume[i] = data[date[i]]['5. volume'];
                 }
-                console.log(std(high))
+                var DATA = [{
+                    type: 'violin',
+                    x: close,
+                    points: 'none',
+                    box: {
+                        visible: true
+                    },
+                    boxpoints: false,
+                    line: {
+                        color: 'black'
+                    },
+                    fillcolor: '#FFFFFF',
+                    opacity: .6,
+                    meanline: {
+                        visible: true
+                    },
+                    y0: "Total Bill"
+                }]
+
+                var layout = {
+                    font: {
+                        family: "Courier New, monospace",
+                        size: 18,
+                        color: "white"
+                    },
+                    width: 1440,
+                    plot_bgcolor: '#000000',
+                    paper_bgcolor: '#000000',
+                    yaxis: {
+                        gridcolor: "rgba(255,255,255,.2)",
+                    },
+                    xaxis: {
+                        gridcolor: "rgba(255,255,255,.2)",
+                        zeroline: false
+                    }
+                }
+                Plotly.newPlot('violinplot', DATA, layout);
+                var DATA = [{
+                    type: 'violin',
+                    x: volume,
+                    points: 'none',
+                    box: {
+                        visible: true
+                    },
+                    boxpoints: false,
+                    line: {
+                        color: 'black'
+                    },
+                    fillcolor: '#FFFFFF',
+                    opacity: .6,
+                    meanline: {
+                        visible: true
+                    },
+                    y0: "Total Bill"
+                }]
+                Plotly.newPlot('violinplotvolume', DATA, layout);
+
+                this.setState({
+                    maxpriceopen: Math.max(...open),
+                    minpriceopen: Math.min(...open),
+                    maxpriceclose: Math.max(...close),
+                    minpriceclose: Math.min(...close),
+                    maxpricehigh: Math.max(...high),
+                    minpricehigh: Math.min(...high),
+                    maxpricelow: Math.max(...low),
+                    minpricelow: Math.min(...low),
+                    maxvolume: Math.max(...volume),
+                    minvolume: Math.min(...volume),
+                    totalvolumetraded: eval(volume.join('+'))
+                })
+                Plotly.newPlot('daily-open', DATA, layout);
                 var layout = {
                     font: {
                         family: "Courier New, monospace",
@@ -53,6 +134,7 @@ class App extends Component {
                         gridcolor: "rgba(255,255,255,.2)",
                     }
                 };
+
                 var DATA = [
                     {
                         x: date,
@@ -71,7 +153,6 @@ class App extends Component {
                 ];
                 Plotly.newPlot('daily-openMa', DATA, layout);
                 let ma1 = sma(volume, 7)
-                console.log(ma1)
                 var DATA = [
                     {
                         x: date,
@@ -79,9 +160,35 @@ class App extends Component {
                         type: 'scatter',
                     }
                 ];
-
                 Plotly.newPlot('daily-volumeMa', DATA, layout);
-
+                let returnfromstocksperday = [null];
+                for (let i = 1; i < close.length; i++) {
+                    returnfromstocksperday[i] = ((close[i] - close[i - 1]) / close[i - 1]).toFixed(4)
+                }
+                console.log("Return from stock : " + returnfromstocksperday)
+                var layout1 = {
+                    font: {
+                        family: "Courier New, monospace",
+                        size: 18,
+                        color: "white"
+                    },
+                    width: 1440,
+                    plot_bgcolor: '#000000',
+                    paper_bgcolor: '#000000',
+                    yaxis: {
+                        gridcolor: "rgba(255,255,255,.2)",
+                    },
+                    xaxis: {
+                        gridcolor: "rgba(255,255,255,.2)",
+                    }
+                };
+                var DATA1 = [
+                    {
+                        x: returnfromstocksperday,
+                        type: 'histogram'
+                    }
+                ];
+                Plotly.newPlot('pct-change', DATA1, layout1);
                 var DATA = [
                     {
                         x: date,
@@ -89,7 +196,47 @@ class App extends Component {
                         type: 'scatter',
                     }
                 ];
-
+                // var bollinger = boll(open)
+                // console.log(bollinger)
+                // var Data = [
+                //     {
+                //         x: date,
+                //         y: open,
+                //         type: 'scatter',
+                //     },
+                //     {
+                //         x: date,
+                //         y: bollinger.mid,
+                //         type: 'scatter',
+                //     },
+                //     {
+                //         x: date,
+                //         y: bollinger.upper,
+                //         type: 'scatter',
+                //     },
+                //     {
+                //         x: date,
+                //         y: bollinger.lower,
+                //         type: 'scatter',
+                //     }
+                // ]
+                // var layout1 = {
+                //     plot_bgcolor: '#000000',
+                //     paper_bgcolor: '#000000',
+                //     width: 1440,
+                //     yaxis: {
+                //         gridcolor: "rgba(255,255,255,.2)",
+                //     },
+                //     xaxis: {
+                //         gridcolor: "rgba(255,255,255,.2)",
+                //     },
+                //     font: {
+                //         family: "Courier New, monospace",
+                //         size: 18,
+                //         color: "white"
+                //     }
+                // };
+                // Plotly.newPlot('bollinger', Data, layout1);
                 Plotly.newPlot('daily-volume', DATA, layout);
                 var trace = {
                     x: date.reverse(),
@@ -180,6 +327,14 @@ class App extends Component {
                     }
                 ];
                 Plotly.newPlot('weekly-open', DATA, layout);
+                var DATA = [
+                    {
+                        x: date,
+                        y: sma(open, 7),
+                        type: 'scatter',
+                    }
+                ];
+                Plotly.newPlot('weekly-openMa', DATA, layout);
                 // var DATA = [
                 //     {
                 //         x: date,
@@ -226,12 +381,9 @@ class App extends Component {
             .catch(err => console.log(err))
         axios.get("https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=" + this.state.ticker + "&interval=5min&apikey=9O8KE4AAY96A5AKK")
             .then(res => {
-
                 let low = [], high = [], close = [], open = [], volume = [];
-                console.log("https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=" + this.state.ticker + "&interval=5min&apikey=9O8KE4AAY96A5AKK")
                 let data = res.data['Time Series (5min)']
                 date = Object.keys(data);
-                console.log(date.reverse())
                 for (let i = 0; i < date.length; i++) {
                     open[i] = parseFloat(data[date[i]]['1. open']).toFixed(2);
                     high[i] = parseFloat(data[date[i]]['2. high']).toFixed(2);
@@ -239,7 +391,6 @@ class App extends Component {
                     close[i] = parseFloat(data[date[i]]['4. close']).toFixed(2);
                     volume[i] = parseFloat(data[date[i]]['5. volume']).toFixed(0);
                 }
-                console.log(open)
                 var trace = {
                     x: date.reverse(),
                     close: close.reverse(),
@@ -317,7 +468,13 @@ class App extends Component {
         } else {
             visible = !hidden
         }
-        console.log(visible)
+        const style2 = {
+            border: '1px solid white',
+            color: 'white',
+            backgroundColor: 'black',
+            borderRadius: '10px',
+            padding: '1rem'
+        }
         return (
             <React.Fragment>
                 <header>
@@ -325,7 +482,8 @@ class App extends Component {
                         src={logo}
                         alt={"icon"}/>
                     <nav>
-                        <li><a style={{color:'white', textDecoration:'none', fontSize: '2rem'}}>Financial Dashboard</a></li>
+                        <li><a style={{color: 'white', textDecoration: 'none', fontSize: '2rem'}}>Financial
+                            Dashboard</a></li>
                     </nav>
                 </header>
                 <div className="ui container left aligned" style={style}>
@@ -345,40 +503,119 @@ class App extends Component {
                     </form>
                 </div>
                 <div className="ui segment" hidden={visible}
-                     style={{height: '400px',backgroundColor: "rgba(0,0,0,.85)"}}>
+                     style={{height: '400px', backgroundColor: "rgba(0,0,0,.85)"}}>
                     <div className="ui active inverted dimmer" style={{backgroundColor: "rgba(0,0,0,.85)"}}>
                         <div className="ui large text loader">Loading</div>
                     </div>
                 </div>
                 <div hidden={hidden}>
-                    <div style={{textAlign: "center"}}>
-                        <h1>Daily plots</h1>
+                    <div style={{textAlign: 'center'}}>
+                        <h2>Basic Stock figures</h2>
                     </div>
-                    <div id='myDiv1' hidden={hidden}></div>
+                    <div className="ui two column doubling stackable grid container" style={{margin: "50px"}}>
+                        <div className="column">
+                            <div style={style2}>
+                                <h2>Maximum opening price: {this.state.maxpriceopen.toFixed(2)}$</h2>
+                            </div>
+                        </div>
+                        <div className="column">
+                            <div style={style2}>
+                                <h2>Maximum closing price: {this.state.maxpriceclose.toFixed(2)}$</h2>
+                            </div>
+                        </div>
+                        <div className="column">
+                            <div style={style2}>
+                                <h2>Maximum high price: {this.state.maxpricehigh.toFixed(2)}$</h2>
+                            </div>
+                        </div>
+                        <div className="column">
+                            <div style={style2}>
+                                <h2>Maximum low price: {this.state.maxpricelow.toFixed(2)}$</h2>
+                            </div>
+                        </div>
+                        <div className="column">
+                            <div style={style2}>
+                                <h2>Minimum opening price: {this.state.minpriceopen.toFixed(2)}$</h2>
+                            </div>
+                        </div>
+                        <div className="column">
+                            <div style={style2}>
+                                <h2>Minimum closing price: {this.state.minpriceclose.toFixed(2)}$</h2>
+                            </div>
+                        </div>
+                        <div className="column">
+                            <div style={style2}>
+                                <h2>Minimum high price: {this.state.minpricehigh.toFixed(2)}$</h2>
+                            </div>
+                        </div>
+                        <div className="column">
+                            <div style={style2}>
+                                <h2>Minimum low price: {this.state.minpricelow.toFixed(2)}$</h2>
+                            </div>
+                        </div>
+                        <div className="column">
+
+                            <div style={style2}>
+                                <h2>Maximum volume traded: {this.state.maxvolume}</h2>
+                            </div>
+                        </div>
+                        <div className="column">
+                            <div style={style2}>
+                                <h2>Minimum volume traded: {this.state.minvolume}</h2>
+                            </div>
+                        </div>
+                        <div className="column">
+                            <div style={style2}>
+                                <h2>Total volume traded: {(this.state.totalvolumetraded / 1000000).toFixed(2)}M</h2>
+                            </div>
+                        </div>
+                    </div>
                     <div className="ui section divider"></div>
+                </div>
+                <div hidden={hidden}>
                     <div style={{textAlign: "center"}}>
-                        <h2>Candle</h2>
-                        <div id='myDiv'></div>
+                        <h1>5 minute</h1>
+                        <div id='myDiv1' style={{overflow: 'scroll'}}></div>
                         <div className="ui section divider"></div>
                     </div>
                     <div style={{textAlign: "center"}}>
-                        <h2>Daily open</h2>
-                        <div id='daily-open'></div>
+                        <h2>Daily</h2>
+                        <div id='myDiv' style={{overflow: 'scroll'}}></div>
                         <div className="ui section divider"></div>
                     </div>
                     <div style={{textAlign: "center"}}>
-                        <h2>Daily open MA</h2>
-                        <div id='daily-openMa'></div>
+                        <h2>Daily Opening price</h2>
+                        <div id='daily-open' style={{overflow: 'scroll'}}></div>
                         <div className="ui section divider"></div>
                     </div>
                     <div style={{textAlign: "center"}}>
-                        <h2>Daily Volume</h2>
-                        <div id='daily-volume'></div>
+                        <h2>Daily open price (Moving Average)</h2>
+                        <div id='daily-openMa' style={{overflow: 'scroll'}}></div>
                         <div className="ui section divider"></div>
                     </div>
                     <div style={{textAlign: "center"}}>
-                        <h2>Daily Volume MA</h2>
-                        <div id='daily-volumeMa'></div>
+                        <h2>Violin plot (Opening price of stock)</h2>
+                        <div id='violinplot' style={{overflow: 'scroll'}}></div>
+                        <div className="ui section divider"></div>
+                    </div>
+                    <div style={{textAlign: "center"}}>
+                        <h2>Daily Percent Change (Histogram)</h2>
+                        <div id='pct-change' style={{overflow: 'scroll'}}></div>
+                        <div className="ui section divider"></div>
+                    </div>
+                    <div style={{textAlign: "center"}}>
+                        <h2>Daily Volume Traded</h2>
+                        <div id='daily-volume' style={{overflow: 'scroll'}}></div>
+                        <div className="ui section divider"></div>
+                    </div>
+                    <div style={{textAlign: "center"}}>
+                        <h2>Daily Volume Traded (Moving Average)</h2>
+                        <div id='daily-volumeMa' style={{overflow: 'scroll'}}></div>
+                        <div className="ui section divider"></div>
+                    </div>
+                    <div style={{textAlign: "center"}}>
+                        <h2>Violin plot (Volume Traded)</h2>
+                        <div id='violinplotvolume' style={{overflow: 'scroll'}}></div>
                         <div className="ui section divider"></div>
                     </div>
                     {/*<div style={{textAlign: "center"}}>*/}
@@ -397,19 +634,30 @@ class App extends Component {
                     {/*    <div className="ui section divider"></div>*/}
                     {/*</div>*/}
                     <div style={{textAlign: "center"}}>
-                        <h2>Weekly open</h2>
-                        <div id='weekly-open'></div>
+                        <h2>Weekly Opening Price</h2>
+                        <div id='weekly-open' style={{overflow: 'scroll'}}></div>
                         <div className="ui section divider"></div>
                     </div>
                     <div style={{textAlign: "center"}}>
-                        <h2>Weekly volume traded</h2>
-                        <div id='weekly-volume'></div>
+                        <h2>Weekly Opening Price (Moving Average)</h2>
+                        <div id='weekly-openMa' style={{overflow: 'scroll'}}></div>
                         <div className="ui section divider"></div>
                     </div>
                     <div style={{textAlign: "center"}}>
-                        <h2>Weekly volume traded Moving Average</h2>
-                        <div id='weekly-volumeMa'></div>
+                        <h2>Weekly Volume Traded</h2>
+                        <div id='weekly-volume' style={{overflow: 'scroll'}}></div>
                         <div className="ui section divider"></div>
+                    </div>
+                    <div style={{textAlign: "center"}}>
+                        <h2>Weekly Volume Traded (Moving Average)</h2>
+                        <div id='weekly-volumeMa' style={{overflow: 'scroll'}}></div>
+                        <div className="ui section divider"></div>
+                    </div>
+                    <div style={{textAlign: "center"}}>
+                        <h2>Bollinger Bands</h2>
+                        <div id='bollinger' style={{overflow: 'scroll'}}></div>
+                        <div className="ui section divider"></div>
+
                     </div>
                 </div>
 
