@@ -49,7 +49,6 @@ header li {
     color: white;
 }
 
-header li a {
-    color: black;
-    text-decoration: none;
+.topnav-right {
+    float: right;
 }

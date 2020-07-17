@@ -41,7 +41,7 @@ class App extends Component {
         axios.get("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + this.state.ticker + "&outputsize=full&apikey=9O8KE4AAY96A5AKK")
             .then(res => {
                 let keys = Object.keys(res.data);
-                if (keys[0] === "Error Message" || keys[0] == "Note") {
+                if (keys[0] === "Error Message" || keys[0] === "Note") {
                     this.setState({error: true})
                 } else {
                     this.setState({error: false})
@@ -177,8 +177,6 @@ class App extends Component {
                     for (let i = 1; i < returnfromstocksperday.length; i++) {
                         cummulativedailyreturn[i] = ((1 + parseFloat(returnfromstocksperday[i])) * parseFloat(cummulativedailyreturn[i - 1])).toFixed(5);
                     }
-                    console.log(returnfromstocksperday)
-                    console.log(cummulativedailyreturn)
                     var layout1 = {
                         font: {
                             family: "Courier New, monospace",
@@ -616,6 +614,11 @@ class App extends Component {
                             fontFamily: "monospace,'Courier New', Courier"
                         }}>Financial
                             Dashboard</a></li>
+                        {/*<div className="topnav-right">*/}
+                        {/*    <a href="https://github.com/spiderxm/Financial-Dashboard" style={{*/}
+                        {/*    }}>*/}
+                        {/*        <i className="github inverted icon huge"></i></a>*/}
+                        {/*</div>*/}
                     </nav>
                 </header>
                 <div className="ui container left aligned" style={style}>
@@ -810,7 +813,16 @@ class App extends Component {
                         <div className="ui section divider"></div>
                     </div>
                 </div>
-
+                <div style={{
+                    left: "0",
+                    position: "absolute",
+                    backgroundColor: "black",
+                    marginTop: "10px",
+                    width: "100%",
+                    padding: "5px 0",
+                    textAlign: "center"
+                }}>
+                </div>
             </React.Fragment>
         )
     }
